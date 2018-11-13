@@ -12,16 +12,16 @@ matrix:
 
 branches:
   only:
-    # release tags
+    # E.g., `v1.2.3`
     - /^v\d+\.\d+\.\d+.*$/
     - master
 
 before_script:
   - rustup component add rustfmt-preview
 script:
-  - cargo fmt --all -- --check
-  - cargo build --verbose --all
-  - cargo test --verbose --all
+  - cargo fmt --all -- --check || travis_terminate 1
+  - cargo build --all --verbose || travis_terminate 1
+  - cargo test --all --verbose || travis_terminate 1
 
 cache: cargo
 before_cache:
@@ -31,3 +31,4 @@ before_cache:
 notifications:
   email:
     on_success: never
+
