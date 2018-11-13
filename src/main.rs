@@ -1,5 +1,6 @@
 fn main() {
-    println!("Hello, world!");
+// This invalid indentation should cause the rustfmt check to fail:
+println!("Hello, world!");
 }
 
 #[cfg(test)]
