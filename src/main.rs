@@ -5,7 +5,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn this_should_fail() {
-        assert_eq!(1 + 1, 3);
+    fn this_should_not_fail() {
+        assert_eq!(1 + 1, 2);
     }
 }
