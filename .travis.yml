@@ -16,6 +16,13 @@ branches:
     - /^v\d+\.\d+\.\d+.*$/
     - master
 
+before_script:
+  - rustup component add rustfmt-preview
+script:
+  - cargo fmt --all -- --check
+  - cargo build --verbose --all
+  - cargo test --verbose --all
+
 cache: cargo
 before_cache:
   # Travis can't cache files that are not readable by "others"
