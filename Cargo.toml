@@ -1,6 +1,6 @@
 [package]
 name = "rust-ci-example"
-version = "0.1.0"
+version = "0.1.1-alpha.0"
 authors = ["Walfie <walfington@gmail.com>"]
 publish = false
 
