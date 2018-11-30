@@ -5,3 +5,9 @@ authors = ["Walfie <walfington@gmail.com>"]
 publish = false
 
 [dependencies]
+
+[dev-dependencies.cargo-husky]
+version = "1.2.0"
+default-features = false
+features = ["precommit-hook", "run-cargo-fmt", "run-cargo-test"]
+
