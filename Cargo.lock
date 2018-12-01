@@ -1,14 +1,4 @@
 [[package]]
-name = "cargo-husky"
-version = "1.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-
-[[package]]
 name = "rust-ci-example"
 version = "0.1.1-alpha.0"
-dependencies = [
- "cargo-husky 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
 
-[metadata]
-"checksum cargo-husky 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "91ee33f8f39e4b469dfcab5f86c2572355965b49329ff8a665b530cc52c1dfa3"
