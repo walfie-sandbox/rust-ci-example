@@ -1,32 +1,70 @@
-language: rust
+# Based on the "trust" template v0.1.2
+# https://github.com/japaric/trust/tree/v0.1.2
 
-rust:
-  - stable
-  - beta
-  - nightly
+dist: trusty
+language: rust
+services: docker
+sudo: required
+
+env:
+  global:
+    - CRATE_NAME=rust-ci-example
+    - EXECUTABLE_NAME=rust-ci-example
 
 matrix:
-  allow_failures:
-    - rust: nightly
-  fast_finish: true
+  include:
+    # Linux
+    - env: TARGET=x86_64-unknown-linux-musl
 
-branches:
-  only:
-    # E.g., `v1.2.3`
-    - /^v\d+\.\d+\.\d+.*$/
-    - master
+    # OSX
+    - env: TARGET=x86_64-apple-darwin
+      os: osx
 
-before_script:
+    # Windows
+    - env: TARGET=x86_64-pc-windows-gnu
+
+before_install:
+  - set -e
+  - rustup self update
   - rustup component add rustfmt-preview
+
+install:
+  - sh ci/install.sh
+  - source ~/.cargo/env || true
+
 script:
-  - cargo fmt --all -- --check || travis_terminate 1
-  - cargo build --all --verbose || travis_terminate 1
-  - cargo test --all --verbose || travis_terminate 1
+  - bash ci/script.sh
+
+after_script: set +e
+
+before_deploy:
+  - sh ci/before_deploy.sh
+
+deploy:
+  # `api_key.secure` is obtained as follows:
+  # - Create a `public_repo` GitHub token. Go to: https://github.com/settings/tokens/new
+  # - Encrypt it: `travis encrypt 0123456789012345678901234567890123456789
+  # - Paste the output down here
+  api_key:
+    secure: "eeqBueUP5FEHMGY8UhJZUTK06bie+qUy5LZPMLJYRzcH7/462q45TvUsc5FPrbUut6ADqhls8GKQ/kY8YkqsjShrq8RUsJjjS7AbqvSAa9lQ8Kv8Sto1ITyq/i3W4OidQkzbWmj2AMRaBGR+SKXEAQToyWbYW79CuQBuaIztY9S/3YtvGFG7kvJxLJrQYPa/gnlZsg73PcWskaTNE1Gg7m2v2XY2dGS6ZsFsB8xrw9Ph868wFr8V2JPYOxuJRA4uK+KYFtJicDaYBVbAatb1Jzu62JYQru3ZYdn85qP1Q9150e0NrYgKaLMpGOuYxaxUw6oFCCNf479xn0UDg0XVZ72L/wS58WdVHxFMyvUWxC28hvIlN8ESKBoajgsbB4JmqRSel5entEBnDmWIeoB9Ncxm3lPJOiJEg1BcocdHdD3ROinhwEDsaHBeR+gXKk1t+gfkUWScoHU4qYYhS5hIjJEh9kRV9R5UGgPPOzb7Pd4a6+mldEPsCtx/yeTfHQlmjaxv7lOrgvZT5MfVFcjVaqvGDWvpbxcoqKW35m8cA85ZvMfGHMvFDG0K/uUeOWzTdkMJr7que4VK7+HDZWHEDzCojodwfh0nwHYv5ql6k4k+3SmBcQ9c0Mt5YPloJ+uw/CtANDqkcR4tI/12U96zWWuzGx9MHGnIV8R1PJdYjCk="
+  file_glob: true
+  file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
+  on:
+    condition: $TRAVIS_RUST_VERSION = stable
+    tags: true
+  provider: releases
+  skip_cleanup: true
 
 cache: cargo
 before_cache:
   # Travis can't cache files that are not readable by "others"
   - chmod -R a+r $HOME/.cargo
+
+branches:
+  only:
+    # Release tags (e.g. "v1.2.3" or "1.2.3")
+    - /^v?\d+\.\d+\.\d+.*$/
+    - master
 
 notifications:
   email:
